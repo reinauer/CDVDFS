@@ -210,7 +210,7 @@ LONG handler(struct ExecBase *SysBase)
 register PACKET *packet;
 MSG     *msg;
 ULONG signals;
-   
+
     global->playing = FALSE;
 
     /*
@@ -273,7 +273,7 @@ ULONG signals;
 	 *  (According to the official documentation, this is not
 	 *  required. Some debugging tools, however, depend on it.)
 	 */
-	    
+
 /*	global->DosNode->dn_Startup = Make_FSSM (); */
 
     } else {		                /*  couldn't open dos.library   */
@@ -341,7 +341,7 @@ ULONG signals;
 
     if (global->g_cd)
       Unmount ();
-    
+
     FreeVec(global->g_vol_name);
 
     if (global->g_cd)
@@ -387,7 +387,7 @@ void    *tmp;
 char    buf[256];
 register WORD   error;
 UBYTE   notdone = 1;
- 
+
 #ifdef __AROS__
 	global = global->acdrbase->GetData(global->acdrbase);
 #endif
@@ -456,7 +456,7 @@ UBYTE   notdone = 1;
 		packet = (PACKET *)msg->mn_Node.ln_Name;
 		packet->dp_Res1 = DOSTRUE;
 		packet->dp_Res2 = 0;
-		error = 0;	
+		error = 0;
 		BUG(dbprintf(
 			"Packet: %3ld %08lx %08lx %08lx %10s ",
 			packet->dp_Type,
@@ -478,7 +478,7 @@ UBYTE   notdone = 1;
 				/*
 					some return codes cause the WB to pop a requester; we don't
 					want this, though. Therefore we use this "exotic" return code:
-				*/ 
+				*/
 				packet->dp_Res2 = ERROR_INVALID_COMPONENT_NAME;
 				BUG(dbprintf("ERR=%ld\n", (LONG) packet->dp_Res2);)
 				returnpacket(packet);
@@ -990,7 +990,7 @@ openbreak:
 				outbuf[maxlength - 1] = 0;
 				Close_Object (obj);
 				packet->dp_Res1 = strlen (outbuf);
-			}	
+			}
 			else
 			{
 				if (global->iso_errno == ISOERR_ILLEGAL_NAME)
@@ -1145,14 +1145,14 @@ void cdunlock (LOCK *lock)
 
   Unregister_Lock (lock);
   --obj->volume->locks;
-  
+
   /* if all locks and filehandles have been removed, and if the volume
    * is not the current volume, then the volume node may be removed:
    */
   if (obj->volume != global->g_volume &&
-      obj->volume->locks == 0 && obj->volume->file_handles == 0) {     
+      obj->volume->locks == 0 && obj->volume->file_handles == 0) {
     VOLUME *vol = obj->volume;
-    
+
     Forbid ();
       Remove_Volume_Node (vol->devlist);
     Permit ();
@@ -1195,7 +1195,7 @@ CDROM_OBJ *getlockfile (LONG lock)
 int Check_For_Volume_Name_Prefix (char *p_pathname)
 {
   char *pos = strchr (p_pathname, ':');
-  
+
   return pos ? (pos - p_pathname) + 1 : 0;
 }
 
@@ -1219,7 +1219,7 @@ void Fill_FileInfoBlock (FIB *p_fib, CDROM_INFO *p_info, VOLUME *p_volume)
 		p_fib->fib_DirEntryType = ST_SOFTLINK;
 	else
 		p_fib->fib_DirEntryType = p_info->directory_f ? ST_USERDIR : ST_FILE;
-  
+
 	if (len == 1 && *src == ':')
 	{
 		/* root of file system: */
@@ -1259,9 +1259,9 @@ void Fill_FileInfoBlock (FIB *p_fib, CDROM_INFO *p_info, VOLUME *p_volume)
 	/* I don't know exactly why I have to set fib_EntryType, but other
 	 * handlers (e.g. DiskHandler by J Toebes et.al.) also do this.
 	 */
-   
+
 	p_fib->fib_EntryType = p_fib->fib_DirEntryType;
-  
+
 	p_fib->fib_Protection = p_info->protection;
 	p_fib->fib_Size = p_info->file_length;
 	p_fib->fib_NumBlocks = p_info->file_length >> 11;
@@ -1285,7 +1285,7 @@ void Fill_FileInfoBlock (FIB *p_fib, CDROM_INFO *p_info, VOLUME *p_volume)
  * cause the WORKBENCH to recognize us as a disk. If we don't
  * create a Volume node, Wb will not recognize us.
  */
- 
+
 void Create_Volume_Node (LONG p_disk_type, ULONG p_volume_date) {
 	struct DeviceList *dl;
 
@@ -1356,9 +1356,9 @@ void Mount (void)
       return;
     }
   }
-  
+
   BUG(dbprintf ("***mounting*** ");)
-  Volume_ID (global->g_volume, buf, sizeof (buf)-1);  
+  Volume_ID (global->g_volume, buf, sizeof (buf)-1);
   global->g_vol_name[0] = strlen (buf);
   CopyMem(buf, global->g_vol_name+1, strlen (buf));
 
@@ -1435,9 +1435,9 @@ void Unmount (void)
   if (global->DevList) {
 
     BUG(dbprintf("***unmounting*** ");)
-    
+
     Close_Object (global->g_top_level_obj);
-    
+
     if (global->g_volume->locks == 0 && global->g_volume->file_handles == 0) {
       Remove_Volume_Node (global->DevList);
       Close_Volume (global->g_volume);
@@ -1555,7 +1555,7 @@ void Cleanup_Timer_Device (void)
   if (!CheckIO ((struct IORequest *) global->g_timer_io))
     AbortIO ((struct IORequest *) global->g_timer_io);
   WaitIO ((struct IORequest *) global->g_timer_io);
-  
+
   CloseDevice ((struct IORequest *) global->g_timer_io);
   DeleteIORequest ((struct IORequest *) global->g_timer_io);
   DeleteMsgPort (global->g_timer_mp);

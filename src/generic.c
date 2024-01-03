@@ -9,7 +9,7 @@
  * non-commercial purposes, provided this notice is included.
  * ----------------------------------------------------------------------
  * History:
- * 
+ *
  * 30-Aug-04 sheutlin  fixed using handling of "/" to get the parent directory
  *                     the way Georg Steger suggested
  * 07-Jul-02 sheutlin  various changes when porting to AROS
@@ -61,7 +61,7 @@ extern struct Globals *global;
 int Strncasecmp(char *p_str1,char *p_str2,int p_length) {
 int i;
 int len = 0;
-  
+
 	while (len < p_length && *p_str1 && *p_str2)
 	{
 		if ((i = ToLower (*p_str1++) - ToLower (*p_str2++)))
@@ -121,7 +121,7 @@ t_protocol Which_Protocol
 			return PRO_JOLIET;
 		return PRO_ISO;
 	}
-  
+
 	if (Uses_High_Sierra_Protocol(p_cdrom))
 		return PRO_HIGH_SIERRA;
 
@@ -135,7 +135,7 @@ VOLUME *Open_Volume(CDROM *p_cdrom, t_bool p_use_rock_ridge, t_bool p_use_joliet
 VOLUME *res;
 int skip;
 t_ulong offset, svdoffset;
-    
+
 	res = AllocMem (sizeof (VOLUME), MEMF_PUBLIC);
 	if (!res)
 	{
@@ -144,7 +144,7 @@ t_ulong offset, svdoffset;
 	}
 
 	res->cd = p_cdrom;
-  
+
 	res->locks = 0;        /* may be modified by application program */
 	res->file_handles = 0; /* may be modified by application program */
 	res->protocol = Which_Protocol(p_cdrom, p_use_rock_ridge, p_use_joliet, &skip, &offset, &svdoffset);
@@ -375,7 +375,7 @@ int Seek_Position (CDROM_OBJ *p_object, long p_offset, int p_mode)
     global->iso_errno = ISOERR_BAD_ARGUMENTS;
     return 0;
   }
-  
+
   switch (p_mode) {
   case SEEK_FROM_START:
     if (p_offset < 0 || p_offset > max_len) {
@@ -401,7 +401,7 @@ int Seek_Position (CDROM_OBJ *p_object, long p_offset, int p_mode)
     break;
   default:
     global->iso_errno = ISOERR_BAD_ARGUMENTS;
-    return 0;    
+    return 0;
   }
   p_object->pos = new_pos;
   return 1;

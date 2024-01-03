@@ -9,7 +9,7 @@
  * non-commercial purposes, provided this notice is included.
  * ----------------------------------------------------------------------
  * History:
- * 
+ *
  * 18-Aug-07 sonic   Fixed reading CL and PL fields on little-endian machines
  * 04-Jun-07 sonic   Fixed endianess check in Is_A_Symbolic_Link()
  * 05-May-07 sonic   Added support for RockRidge protection bits and file comments
@@ -221,7 +221,7 @@ int Get_RR_File_Comment(VOLUME *p_volume, directory_record *p_dir, uint32_t *p_p
 #define AS_PROTECTION	    0x01
 #define AS_COMMENT	    0x02
 #define AS_COMMENT_CONTINUE 0x04
-	
+
         struct as_system_use_field
         {
 		char	      id[2];

@@ -9,7 +9,7 @@
  * non-commercial purposes, provided this notice is included.
  * ----------------------------------------------------------------------
  * History:
- * 
+ *
  * 15-May-07 sonic     Show_CDDA_Icon() behaves better if called twice
  * 08-Apr-07 sonic     Removed DEBUG definition
  * 31-Mar-03 sonic     - fixed warnings
@@ -213,7 +213,7 @@ static struct EasyStruct req =
 	NULL,
 	(UBYTE *) "Abort"
 };
-          
+
 	va_start (arg, p_message);
 	if (IntuitionBase)
 	{

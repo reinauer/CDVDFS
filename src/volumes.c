@@ -9,7 +9,7 @@
  * non-commercial purposes, provided this notice is included.
  * ----------------------------------------------------------------------
  * History:
- * 
+ *
  * 27-Aug-07 sonic   - Register_Volume_Node() now takes separate pointer to a volume name.
  * 19-Sep-94   fmu   Fixed bug in Reinstall_Locks()
  * 22-May-94   fmu   Performance improvement for lock+filehandle processing.
@@ -82,7 +82,7 @@ void Register_Lock (LOCK *p_lock)
   new->lock = p_lock;
   new->next = global->g_lock_list;
   global->g_lock_list = new;
-  
+
   BUG(dbprintf ("[Installing lock on '%s']", pathname);)
 }
 
@@ -187,7 +187,7 @@ t_fh_node *new;
 
 void Unregister_File_Handle(CDROM_OBJ *p_obj) {
 t_fh_node *ptr, *old;
-  
+
 	for (ptr=global->g_fh_list, old = NULL; ptr; old = ptr, ptr = ptr->next)
 		if (ptr->obj == p_obj && StrCmp (global->g_vol_name+1, ptr->vol_name) == 0)
 		{
@@ -240,7 +240,7 @@ t_fh_node *ptr;
 void Register_Volume_Node(struct DeviceList *p_volume, char *Name) {
 t_vol_reg_node *new;
 int len;
-  
+
 	new = (t_vol_reg_node*) AllocMem (sizeof (t_vol_reg_node), MEMF_PUBLIC);
 	if (!new)
 		return;

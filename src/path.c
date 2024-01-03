@@ -50,7 +50,7 @@ t_path_node *node;
 
 	StrCpy (node->name, p_name);
 	node->next = Copy_Path_List (p_list, FALSE);
-  
+
 	return node;
 }
 
@@ -66,7 +66,7 @@ t_path_list Copy_Path_List (t_path_list p_src, int p_strip)
   for (node = start; node; node = node->next) {
     node->references++;
   }
-  
+
   return start;
 }
 
@@ -98,7 +98,7 @@ t_path_node *node;
 		StrCpy (p_buffer, ":");
 		return TRUE;
 	}
-  
+
 	/* calculate length: */
 	for (len=1, node=p_list; node; node = node->next)
 		len += StrLen (node->name) + 1;

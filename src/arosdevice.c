@@ -54,7 +54,7 @@ static int GM_UNIQUENAME(Init)(LIBBASETYPEPTR acdrbase)
 				    {TASKTAG_ARG1, (IPTR)acdrbase},
 				    {TAG_DONE	    	    	 }
 				};
-				
+
 				task->tc_SPLower = stack;
 				task->tc_SPUpper = (BYTE *)stack+AROS_STACKSIZE;
     	    	    	    #if AROS_STACK_GROWS_DOWNWARDS

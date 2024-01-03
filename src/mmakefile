@@ -62,10 +62,10 @@ contrib-cdvdfs-makefile : $(OBJDIR)/Makefile.cdrom
 
 TMP_TARGET := Makefile.cdrom
 TMP_DEPS := $(GENMODULE)
-TMP_OPTS := 
+TMP_OPTS :=
 ifneq (,)
-    TMP_OPTS += -c 
-    TMP_DEPS += 
+    TMP_OPTS += -c
+    TMP_DEPS +=
 else
     TMP_DEPS += cdrom.conf
 endif
@@ -99,7 +99,7 @@ BD_DEFMODDIR := $(cdrom_MODDIR)
 ##
 BD_INCDIR    := $(AROSDIR)/$(AROS_DIR_INCLUDE)
 ifeq (,yes)
-    cdrom_INCLUDES := proto/cdrom.h clib/cdrom_protos.h defines/cdrom.h 
+    cdrom_INCLUDES := proto/cdrom.h clib/cdrom_protos.h defines/cdrom.h
 endif
 ifeq (,no)
     cdrom_INCLUDES :=
@@ -129,8 +129,8 @@ else
     TMP_OPTS :=
 endif
 ifneq (,)
-    TMP_OPTS += -c 
-    TMP_DEPS += 
+    TMP_OPTS += -c
+    TMP_DEPS +=
 else
     TMP_DEPS += cdrom.conf
 endif
@@ -187,10 +187,10 @@ ifneq ($(cdrom_INCLUDES),)
 TMP_TARGETS := $(cdrom_INCLUDES)
 
 TMP_DEPS := $(GENMODULE)
-TMP_OPTS := 
+TMP_OPTS :=
 ifneq (,)
-    TMP_OPTS += -c 
-    TMP_DEPS += 
+    TMP_OPTS += -c
+    TMP_DEPS +=
 else
     TMP_DEPS += cdrom.conf
 endif
@@ -230,10 +230,10 @@ endif
 
 TMP_TARGET := cdrom_libdefs.h
 TMP_DEPS := $(GENMODULE)
-TMP_OPTS := 
+TMP_OPTS :=
 ifneq (,)
-    TMP_OPTS += -c 
-    TMP_DEPS += 
+    TMP_OPTS += -c
+    TMP_DEPS +=
 else
     TMP_DEPS += cdrom.conf
 endif
@@ -267,15 +267,15 @@ contrib-cdvdfs-funclist : cdrom.funclist
 
 TMP_TARGET := cdrom.funclist
 TMP_DEPS := $(GENMODULE)
-TMP_OPTS := 
+TMP_OPTS :=
 ifeq ($(BD_DEFREFFILE),)
     $(error reffile needed in rule_genmodule_funclist but none specified)
 endif
 TMP_OPTS := -r $(BD_DEFREFFILE)
 TMP_DEPS += $(BD_DEFREFFILE)
 ifneq (,)
-    TMP_OPTS += -c 
-    TMP_DEPS += 
+    TMP_OPTS += -c
+    TMP_DEPS +=
 else
     TMP_DEPS += cdrom.conf
 endif
@@ -283,7 +283,7 @@ ifneq (handler,)
     TMP_OPTS += -s handler
 endif
 ifneq (,)
-    TMP_OPTS += -d 
+    TMP_OPTS += -d
     TMP_TARGET := /$(TMP_TARGET)
 endif
 
@@ -296,7 +296,7 @@ $(TMP_TARGET) : $(TMP_DEPS)
 
 
 ## Extra genmodule src files generation
-## 
+##
 
 TMP_TARGETS := $(cdrom_STARTFILES) $(cdrom_ENDFILES) \
 	       $(cdrom_LINKLIBFILES)
@@ -313,8 +313,8 @@ else
     TMP_OPTS :=
 endif
 ifneq (,)
-    TMP_OPTS += -c 
-    TMP_DEPS += 
+    TMP_OPTS += -c
+    TMP_DEPS +=
 else
     TMP_DEPS += cdrom.conf
 endif
@@ -364,7 +364,7 @@ endif
 BD_LINKLIBFILES := $(BD_LINKLIBCFILES) $(BD_LINKLIBAFILES)
 
 BD_CCFILES := $(BD_NARCHFILES) $(BD_STARTFILES) \
-    $(BD_ENDFILES) $(BD_LINKLIBCFILES) 
+    $(BD_ENDFILES) $(BD_LINKLIBCFILES)
 
 
 ifeq ($(OBJDIR),)
@@ -494,7 +494,7 @@ ifeq (,)
 $(TMP_TARGETS) : CFLAGS:=-I$(dir $(GENMODULE))/genmod_inc -I$(OBJDIR)/dummyinc $(strip $(BD_CFLAGS))
 else
 $(TMP_TARGETS) : CFLAGS:="-I$(dir $(GENMODULE))/genmod_inc -I$(OBJDIR)/dummyinc $(strip $(BD_CFLAGS)) -include "
-$(TMP_TARGETS) : 
+$(TMP_TARGETS) :
 endif
 $(TMP_TARGETS) : $(CXREF)
 $(TMP_TARGETS) : $(TMP_WILDCARD) : %.c
@@ -657,7 +657,7 @@ BD_OBJDIR$(BDID)    := $(GENDIR)/$(CURDIR)
 BD_TARGETDIR$(BDID) := $(TESTSDIR)
 
 BD_FILES$(BDID)     := $(CDROM_FILES)
-BD_ASMFILES$(BDID)  := 
+BD_ASMFILES$(BDID)  :=
 BD_OBJS$(BDID)      := $(addsuffix .o,$(addprefix $(BD_OBJDIR$(BDID))/,$(BD_FILES$(BDID)) $(BD_ASMFILES$(BDID))))
 BD_DEPS$(BDID)      := $(addsuffix .d,$(addprefix $(BD_OBJDIR$(BDID))/,$(BD_FILES$(BDID))))
 
@@ -752,7 +752,7 @@ $(TMP_TARGETS) : $(TMP_WILDCARD).o : %.s
 	fi
 
 
-TMP_EXTRA_LDFLAGS := 
+TMP_EXTRA_LDFLAGS :=
 ifeq (no,yes)
     TMP_EXTRA_LDFLAGS += $(NIX_LDFLAGS)
 endif
@@ -814,7 +814,7 @@ BD_OBJDIR$(BDID)    := $(GENDIR)/$(CURDIR)
 BD_TARGETDIR$(BDID) := $(AROS_C)
 
 BD_FILES$(BDID)     := $(CHECKCD_FILES)
-BD_ASMFILES$(BDID)  := 
+BD_ASMFILES$(BDID)  :=
 BD_OBJS$(BDID)      := $(addsuffix .o,$(addprefix $(BD_OBJDIR$(BDID))/,$(BD_FILES$(BDID)) $(BD_ASMFILES$(BDID))))
 BD_DEPS$(BDID)      := $(addsuffix .d,$(addprefix $(BD_OBJDIR$(BDID))/,$(BD_FILES$(BDID))))
 
@@ -909,7 +909,7 @@ $(TMP_TARGETS) : $(TMP_WILDCARD).o : %.s
 	fi
 
 
-TMP_EXTRA_LDFLAGS := 
+TMP_EXTRA_LDFLAGS :=
 ifeq (no,yes)
     TMP_EXTRA_LDFLAGS += $(NIX_LDFLAGS)
 endif

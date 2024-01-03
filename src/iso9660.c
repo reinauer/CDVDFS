@@ -10,7 +10,7 @@
  * non-commercial purposes, provided this notice is included.
  * ----------------------------------------------------------------------
  * History:
- * 
+ *
  * 16-Jun-08 sonic   - Skip files with "Associated" flag set. Helps to
  *                     read ISO discs created under MacOS.
  *                   - Supports "Hidden" flag.
@@ -136,7 +136,7 @@ t_ulong *buf;
 	{
 		*p_offset = 0;
 		if (!Read_Sector(p_cdrom, 16))
-			return FALSE;  
+			return FALSE;
 		return StrNCmp((char *) p_cdrom->buffer + 1, "CD001", 5) == 0;
 	}
 
@@ -590,7 +590,7 @@ uint32_t firstblock;
 		}
 
 		remain_file = OBJ(p_file,dir)->data_length - p_file->pos;
-		/* 
+		/*
 			'todo' is the number of bytes in p_buffer which haven't been filled
 			       yet.
 			'remain' is remaining number of bytes in cd->buffer.
@@ -778,7 +778,7 @@ int len;
 void *Iso_Clone_Obj_Info(void *p_info) {
 t_iso_obj_info *info = (t_iso_obj_info *) p_info;
 t_iso_obj_info *new;
-  
+
 	new = AllocMem (sizeof (t_iso_obj_info), MEMF_PUBLIC);
 	if (!new)
 		return NULL;
@@ -856,10 +856,10 @@ int Digs_To_Int (char *p_digits, int p_num)
 {
   int result = 0;
   int i;
-  
+
   for (i=0; i<p_num; i++)
     result = result * 10 + p_digits[i] - '0';
-    
+
   return result;
 }
 

@@ -9,7 +9,7 @@
 #include <utility/tagitem.h>
 
 #include <stddef.h>
-#include <string.h> 
+#include <string.h>
 
 #ifdef DEBUG
 #undef DEBUG
@@ -117,9 +117,9 @@ void AddFileSystemTask(struct ACDRBase *acdrbase, struct IOFileSys *iofs)
 		Forbid();
 		AddTail(&acdrbase->process_list, &node->ln);
 		Permit();
-		
+
 		node->data = newglobal;
-		
+
 		proc = CreateNewProc(tags);
 		if (proc)
 		{
@@ -157,7 +157,7 @@ void AddFileSystemTask(struct ACDRBase *acdrbase, struct IOFileSys *iofs)
 			iofs->IOFS.io_Unit=(struct Unit *)&device->rootfh;
 			return;
 		    }
-			
+
 		} /* if (proc) */
 		else
 		{
@@ -171,21 +171,21 @@ void AddFileSystemTask(struct ACDRBase *acdrbase, struct IOFileSys *iofs)
 		iofs->io_DosError = ERROR_NO_FREE_STORE;
 	    }
 	    FreeMem(newglobal, sizeof(struct Globals));
-		
+
 	} /* if (newglobal) */
 	else
 	{
 	    iofs->io_DosError = ERROR_NO_FREE_STORE;
 	}
 	FreeMem(device, sizeof(struct ACDRDeviceInfo));
-	
+
     } /* if (device) */
     else
     {
 #warning "maybe use another error here"
 	iofs->io_DosError = ERROR_NO_FREE_STORE;
     }
-    
+
     iofs->IOFS.io_Unit=0;
 }
 
@@ -202,7 +202,7 @@ void ACDR_work(struct ACDRBase *acdrbase)
     acdrbase->port.mp_Flags = PA_SIGNAL;
     acdrbase->prport.mp_SigBit = AllocSignal(-1);    /* should never fail! */
     packet.dp_Link = &msg;
-    
+
     for (;;)
     {
         while ((iofs=(struct IOFileSys *)GetMsg(&acdrbase->port)))
@@ -249,7 +249,7 @@ D(bug("[acdr] open: %s\n", iofs->io_Union.io_OPEN_FILE.io_Filename));
                     {
 		    	struct FileLock dummyfl;
 		    	void *handle;
-			
+
 		    	if (!(acdrhandle->flags & AHF_IS_LOCK))
 			{
 			    dummyfl.fl_Link = acdrhandle->handle;
@@ -265,7 +265,7 @@ D(bug("[acdr] open: %s\n", iofs->io_Union.io_OPEN_FILE.io_Filename));
                             0 :
                             (IPTR)MKBADDR(handle);
                         packet.dp_Arg2 =(IPTR)iofs->io_Union.io_OPEN_FILE.io_Filename;
-                        packet.dp_Arg3 = 
+                        packet.dp_Arg3 =
                             (iofs->io_Union.io_OPEN.io_FileMode == FMF_LOCK) ?
                             EXCLUSIVE_LOCK :
                             SHARED_LOCK;
@@ -325,7 +325,7 @@ D(bug("[acdr] openfile: %s, %lx, %lx\n", iofs->io_Union.io_OPEN_FILE.io_Filename
                         ,0
 #endif
                     };
-		    
+
                         packet.dp_Arg1 = (IPTR)MKBADDR(&fh);
                         packet.dp_Arg2 =
                             (acdrhandle ==  &acdrhandle->device->rootfh) ?
@@ -441,7 +441,7 @@ D(bug("[acdr] close: handle=%p\n", acdrhandle->handle));
                 iofs->io_Union.io_IS_FILESYSTEM.io_IsFilesystem = packet.dp_Res1;
                 error = packet.dp_Res2;
                 break;
-		
+
             case FSA_EXAMINE:
                 {
                     struct FileInfoBlock fib;
@@ -458,7 +458,7 @@ D(bug("[acdr] examine: lock=%p\n", acdrhandle->handle));
                     packet.dp_Arg2 = (IPTR)MKBADDR(&fib);
                     sendPacket(acdrbase, &packet, acdrhandle->device->taskmp);
                     error = packet.dp_Res2;
-		    
+
                     if (packet.dp_Res1)
                     {
                 	struct ExAllData    *ead = iofs->io_Union.io_EXAMINE.io_ead;
@@ -520,20 +520,20 @@ D(bug("[acdr] examine: name=%s ([0]=%x)\n", ead->ed_Name, ead->ed_Name[0]));
                                 ead->ed_Next = 0;
                                 error = 0;
                                 break;
-				
+
                             default:
                                 error = ERROR_BAD_NUMBER;
 				break;
                             }
-			    
+
                         } /* if (next<=end) */
                         else
                         {
                             error = ERROR_BUFFER_OVERFLOW;
                         }
-			
+
                     } /* if (packet.dp_Res1) */
-		    
+
                 } /**/
                 break;
 
@@ -587,7 +587,7 @@ D(bug("[acdr] examine: name=%s ([0]=%x)\n", ead->ed_Name, ead->ed_Name[0]));
             case FSA_CREATE_HARDLINK:
             case FSA_CREATE_SOFTLINK:
                 packet.dp_Type = ACTION_MAKE_LINK;
-                packet.dp_Arg1 = 
+                packet.dp_Arg1 =
                     (acdrhandle ==  &acdrhandle->device->rootfh) ?
                     0 :
                     (IPTR)MKBADDR(acdrhandle->handle);
@@ -616,7 +616,7 @@ D(bug("[acdr] examine: name=%s ([0]=%x)\n", ead->ed_Name, ead->ed_Name[0]));
 
             case FSA_READ_SOFTLINK:
                 packet.dp_Type = ACTION_READ_LINK;
-                packet.dp_Arg1 = 
+                packet.dp_Arg1 =
                     (acdrhandle ==  &acdrhandle->device->rootfh) ?
                     0 :
                     (IPTR)MKBADDR(acdrhandle->handle);
@@ -756,7 +756,7 @@ D(bug("[acdr] examine: name=%s ([0]=%x)\n", ead->ed_Name, ead->ed_Name[0]));
                 else
                     error = ERROR_UNKNOWN;
                 break;
- 
+
             case FSA_DISK_INFO:
                 packet.dp_Type = ACTION_DISK_INFO;
                 packet.dp_Arg1 = (IPTR)MKBADDR(iofs->io_Union.io_INFO.io_Info);
@@ -779,16 +779,16 @@ D(bug("[acdr] examine: name=%s ([0]=%x)\n", ead->ed_Name, ead->ed_Name[0]));
                 retval = DOSFALSE;
                 error = ERROR_ACTION_NOT_KNOWN;
 		break;
-		
+
             } /* switch (iofs->IOFS.io_Command) */
-	    
+
             iofs->io_DosError = error;
             ReplyMsg(&iofs->IOFS.io_Message);
-	    
+
         } /* ((iofs=(struct IOFileSys *)GetMsg(&acdrbase->port))) */
-	
+
         Wait(1<<acdrbase->port.mp_SigBit);
-	
+
     } /* for (;;) */
 }
 
@@ -799,7 +799,7 @@ void *ACDR_GetData(struct ACDRBase *acdrbase)
 
     proc = (struct Process *)FindTask(NULL);
     node = (struct ProcNode *)acdrbase->process_list.lh_Head;
-    
+
     while (node->ln.ln_Succ)
     {
 	if (node->proc == proc)
