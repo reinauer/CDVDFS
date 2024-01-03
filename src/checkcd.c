@@ -10,7 +10,8 @@
  * non-commercial purposes, provided this notice is included.
  * ----------------------------------------------------------------------
  * History:
- * 
+ *
+ * 02-Jan-23 stepan    - replaced memcpy by CopyMem
  * 18-Aug-07 sonic     - Now builds on AROS.
  * 08-Apr-07 sonic     - Removed "TRACKDISK" option.
  *                     - Removed dealing with block length.
@@ -51,7 +52,7 @@ int g_path_table_records = 0;
 struct Globals glob;
 struct Globals *global = &glob;
 
-#ifdef __MORPHOS__
+#if defined(__MORPHOS__) || defined(__amigaos__)
 struct Library *UtilityBase;
 #else
 struct UtilityBase *UtilityBase;
@@ -164,14 +165,14 @@ void Get_Path_Table_Record (t_uchar *p_buf, t_ulong p_loc, t_ulong *p_offset)
 
   if (len + (*p_offset & 2047) > 2048) {
     int part1_len = 2048 - (*p_offset & 2047);
-    memcpy (p_buf, global->g_cd->buffer + (*p_offset & 2047), part1_len);
+    CopyMem (global->g_cd->buffer + (*p_offset & 2047), p_buf, part1_len);
     if (!Read_Sector (global->g_cd, sector+1)) {
       printf ("ERROR: illegal sector %lu\n", sector+1);
       exit (1);
     }
-    memcpy (p_buf + part1_len, global->g_cd->buffer, len - part1_len);
+    CopyMem (global->g_cd->buffer, p_buf + part1_len, len - part1_len);
   } else
-    memcpy (p_buf, global->g_cd->buffer + (*p_offset & 2047), len);
+    CopyMem (global->g_cd->buffer + (*p_offset & 2047), p_buf, len);
 
   *p_offset += len;
 }
@@ -326,7 +327,7 @@ void Check_PVD (void)
   Check_723 (pvd, 125);
   Check_723 (pvd, 129);
   Check_733 (pvd, 133);
-  memcpy (&g_pvd, pvd, sizeof (g_pvd));
+  CopyMem (pvd, &g_pvd, sizeof (g_pvd));
 }
 
 void Check_Subdirectory (CDROM_OBJ *p_home, char *p_name)
@@ -372,7 +373,7 @@ void Check_Subdirectory (CDROM_OBJ *p_home, char *p_name)
 	else
 	  sprintf (name, "%s/", p_name);
 	len = strlen (name) + info.name_length;
-	memcpy (name + strlen (name), info.name, info.name_length);
+	CopyMem (info.name, name + strlen (name), info.name_length);
 	name[len] = 0;
 	Check_Subdirectory (p_home, name);
 	free (name);

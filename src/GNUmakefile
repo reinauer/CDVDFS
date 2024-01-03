@@ -12,10 +12,10 @@ DEBUGFLAGS = -DNDEBUG
 
 # some shortcuts
 
-RM		= /c/delete quiet
-NOEXEC		= /c/protect flags=-e
-STRIP		= strip --remove-section=.comment
-CC		= gcc
+RM		= rm -f # /c/delete quiet
+NOEXEC		= chmod 644 #/c/protect flags=-e
+STRIP		= m68k-amigaos-strip --remove-section=.comment
+CC		= m68k-amigaos-gcc
 
 OPT		=-O2
 

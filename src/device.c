@@ -144,6 +144,8 @@
 
 #define ID_CDFS_DISK 0x43444653
 
+struct ExecBase *SysBase;
+
 /*
  *  Since this code might be called several times in a row without being
  *  unloaded, you CANNOT ASSUME GLOBALS HAVE BEEN ZERO'D!!  This also goes
