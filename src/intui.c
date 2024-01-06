@@ -98,11 +98,19 @@ struct IconBase *IconBase=NULL;
 #ifndef AROS_KERNEL
 	IconBase = (struct IconBase *)OpenLibrary("icon.library", 37);
 	if (!IconBase)
+#if 0
 	      Display_Error ("cannot open icon.library");
+#else
+	      dbprintf("cannot open icon.library\n");
+#endif
 	global->IconBase = IconBase;
 	global->WorkbenchBase = (struct WorkbenchBase *)OpenLibrary("workbench.library", 37);
 	if (!global->WorkbenchBase)
+#if 0
 	      Display_Error("cannot open workbench.library");
+#else
+	      dbprintf("cannot open workbench.library\n");
+#endif
 	global->g_user_disk_object = GetDiskObject ("env:cdda");
 	if ((!IconBase) || (!global->g_user_disk_object))
 	{
