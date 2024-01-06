@@ -470,7 +470,7 @@ int main (int argc, char *argv[])
   global->SysBase = SysBase;
   atexit (Cleanup);
 
-  if (!(UtilityBase = (struct UtilityBase *)
+  if (!(UtilityBase = (struct Library *)
          OpenLibrary ("utility.library", 37))) {
     fprintf (stderr, "cannot open utility.library\n");
     exit (1);
