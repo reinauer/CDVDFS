@@ -3,13 +3,13 @@
 #
 
 #Turn these flags on to enable debugging
-DEBUGLIBS  = -ldebug
-DEBUGFLAGS = -DDEBUG
-DEBUGFLAGS += -DDEBUG_USE_SERIAL
+#DEBUGLIBS  = -ldebug
+#DEBUGFLAGS = -DDEBUG
+#DEBUGFLAGS += -DDEBUG_USE_SERIAL
 
 #And these ones are for normal operation
-#DEBUGLIBS  =
-#DEBUGFLAGS = -DNDEBUG
+DEBUGLIBS  =
+DEBUGFLAGS = -DNDEBUG
 
 OS=$(shell uname)
 
