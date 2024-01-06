@@ -101,7 +101,7 @@ struct IconBase *IconBase=NULL;
 #if 0
 	      Display_Error ("cannot open icon.library");
 #else
-	      dbprintf("cannot open icon.library\n");
+	      BUG(dbprintf("cannot open icon.library\n"));
 #endif
 	global->IconBase = IconBase;
 	global->WorkbenchBase = (struct WorkbenchBase *)OpenLibrary("workbench.library", 37);
@@ -109,7 +109,7 @@ struct IconBase *IconBase=NULL;
 #if 0
 	      Display_Error("cannot open workbench.library");
 #else
-	      dbprintf("cannot open workbench.library\n");
+	      BUG(dbprintf("cannot open workbench.library\n"));
 #endif
 	if (IconBase)
 	      global->g_user_disk_object = GetDiskObject ("env:cdda");
