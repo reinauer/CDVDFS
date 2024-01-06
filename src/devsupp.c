@@ -53,11 +53,15 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include <exec/resident.h>
 #include <exec/types.h>
 #include <dos/dostags.h>
 #include <dos/rdargs.h>
+
+#include <inline/exec.h>
 
 #include "aros_stuff.h"
 #include "device.h"
@@ -444,7 +448,7 @@ char *typetostr (int ty)
     }
 }
 
-#if !(defined(__AROS__) || defined(__MORPHOS__))
+#if !defined(DEBUG_USE_SERIAL) && !(defined(__AROS__) || defined(__MORPHOS__))
 
 /*
  *  DEBUGGING CODE.	You cannot make DOS library calls that access other
@@ -580,4 +584,37 @@ int __fflush(void)
 }
 
 #endif /* !(__AROS__ || __MORPHOS__) */
+
+#ifdef DEBUG_USE_SERIAL
+
+#define RawPutChar(___ch) \
+    LP1NR(516, RawPutChar , BYTE, ___ch, d0,\
+          , EXEC_BASE_NAME)
+
+static void raw_put_char(uint32_t c __asm("d0"))
+{
+    RawPutChar(c);
+}
+
+int kvprintf(const char* format, va_list ap)
+{
+    __asm volatile("bchg.b #1,0xbfe001": : : "cc", "memory");
+
+    RawDoFmt((STRPTR)format, ap, (__fpt)raw_put_char, NULL);
+    return 0;
+}
+
+int kprintf(const char* format, ...)
+{
+    if (format == NULL)
+        return 0;
+
+    va_list arg;
+    va_start(arg, format);
+    int ret = kvprintf(format, arg);
+    va_end(arg);
+    return ret;
+}
+#endif
+
 #endif /* !NDEBUG || DEBUG_SECTORS */

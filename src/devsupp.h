@@ -20,7 +20,7 @@ extern PORT *Dback;
 extern short DBDisable;
 extern MSG DummyMsg;
 
-#if !(defined(__AROS__) || defined(__MORPHOS__))
+#if !(defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos__))
 void dbinit (void);
 void dbuninit (void);
 void dbprintf (char *, ...);
