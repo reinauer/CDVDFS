@@ -111,7 +111,8 @@ struct IconBase *IconBase=NULL;
 #else
 	      dbprintf("cannot open workbench.library\n");
 #endif
-	global->g_user_disk_object = GetDiskObject ("env:cdda");
+	if (IconBase)
+	      global->g_user_disk_object = GetDiskObject ("env:cdda");
 	if ((!IconBase) || (!global->g_user_disk_object))
 	{
 #else
