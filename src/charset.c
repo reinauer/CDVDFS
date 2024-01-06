@@ -78,7 +78,8 @@ BOOL ReadUnicodeTable(STRPTR name)
             {
               while(isspace(*p)) p++;
 
-              if(!strnicmp(p, "U+", 2))
+              //if(!strnicmp(p, "U+", 2))
+              if(!strncasecmp(p, "U+", 2))
               {
                 p += 2;
 		n = strtol((const char *)p,(char **)&p,16);
