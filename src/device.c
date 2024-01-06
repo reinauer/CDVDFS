@@ -376,8 +376,8 @@ ULONG signals;
 #define UtilityBase global->UtilityBase
 
 struct TagItem PlayTags[] = {
-	{SYS_Input, NULL},
-	{SYS_Output, NULL},
+	{SYS_Input, (ULONG)NULL},
+	{SYS_Output, (ULONG)NULL},
 	{SYS_Asynch, TRUE},
 	TAG_END
 };

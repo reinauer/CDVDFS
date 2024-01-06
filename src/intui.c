@@ -270,7 +270,7 @@ void Show_CDDA_Icon (void) {
 			0,
 			(UBYTE *) g_iconname,
 			global->g_app_port,
-			NULL,
+			0,
 			global->g_user_disk_object,
 			NULL
 		);
