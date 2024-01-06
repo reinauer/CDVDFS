@@ -9,11 +9,17 @@
 #And these ones are for normal operation
 DEBUGLIBS  =
 DEBUGFLAGS = -DNDEBUG
+OS=$(shell uname)
 
 # some shortcuts
 
-RM		= rm -f # /c/delete quiet
-NOEXEC		= chmod 644 #/c/protect flags=-e
+ifeq "$(OS)" "Linux"
+RM		= rm -f
+NOEXEC		= chmod 644
+else
+RM		= /c/delete quiet
+NOEXEC		= /c/protect flags=-e
+endif
 STRIP		= m68k-amigaos-strip --remove-section=.comment
 CC		= m68k-amigaos-gcc
 
@@ -26,7 +32,6 @@ CFLAGS		= $(OPT) -fno-function-cse
 LDFLAGS1	= -noixemul -nostartfiles
 LDFLAGS2	= -noixemul
 
-OS=$(shell uname)
 ifeq "$(OS)" "MorphOS"
 LDLIBS1 =
 KILLDEV = KillDevice
