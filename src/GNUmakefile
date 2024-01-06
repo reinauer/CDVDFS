@@ -25,7 +25,7 @@ endif
 STRIP		= m68k-amigaos-strip --remove-section=.comment
 CC		= m68k-amigaos-gcc
 
-OPT		=-O2
+OPT		=-Os -m68020-60 -mtune=68030
 
 # -fbaserel does not work, -msmall-code likewise, -fno-builtin requires ixemul
 
@@ -38,7 +38,7 @@ ifeq "$(OS)" "MorphOS"
 LDLIBS1 =
 KILLDEV = KillDevice
 else
-LDLIBS1 = -lamiga
+LDLIBS1 = -lamiga -lgcc
 KILLDEV =
 endif
 
@@ -60,7 +60,7 @@ OBJS4		= checkcd.o cdrom.o iso9660.o rock.o joliet.o hfs.o generic.o path.o char
 all:		cdrom-handler cdrom cdcontrol checkcd $(KILLDEV)
 
 cdrom-handler:	$(OBJS1)
-		$(CC) $(LDFLAGS1) -o $@ $(OBJS1) $(LDLIBS1) $(DEBUGLIBS)
+		$(CC) -o $@ $(OBJS1) $(LDLIBS1) $(DEBUGLIBS) $(LDFLAGS1)
 		$(STRIP) $@
 		$(NOEXEC) $@
 
