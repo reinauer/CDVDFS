@@ -45,7 +45,7 @@
 
 /* Number of seconds betweem 01-Jan-1904 and 01-Jan-1978: */
 
-#define TIME_DIFF ((74 * 365 + 19) * 24 * 60 * 60)
+#define TIME_DIFF ((ULONG)(74 * 365 + 19) * 24 * 60 * 60)
 
 extern struct Globals *global;
 
