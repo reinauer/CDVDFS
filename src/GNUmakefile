@@ -30,7 +30,7 @@ OPT		=-Os -m68020-60 -mtune=68030
 # -fbaserel does not work, -msmall-code likewise, -fno-builtin requires ixemul
 
 CFLAGS		= $(OPT) -fno-function-cse
-CFLAGS         += -I. -include compat.h -I../../libcodesets/Developer/include
+CFLAGS         += -I. -include compat.h -I../../libcodesets/developer/include
 
 LDFLAGS1	= -noixemul -nostartfiles
 LDFLAGS2	= -noixemul
