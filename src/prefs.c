@@ -13,7 +13,9 @@
 void SAVEDS Prefs_Process (void)
 {
     ULONG Sigset;
+#ifdef __AROS__
     struct CDVDBase *global;
+#endif
     struct MsgPort *mp;
     struct Message *msg;
 

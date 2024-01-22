@@ -45,7 +45,10 @@ extern struct Library *SysBase, *DOSBase;
 #define STD_BUFFERS 20
 #define FILE_BUFFERS 2
 
-static struct CDVDBase *global;
+#ifdef __AROS__
+static
+#endif
+struct CDVDBase *global;
 t_ulong g_check_sector;
 char *g_check_name;
 prim_vol_desc g_pvd;

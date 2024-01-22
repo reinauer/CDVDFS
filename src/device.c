@@ -211,6 +211,8 @@ LONG SAVEDS Main(void)
 {
     return handler(*(struct ExecBase **)4L);
 }
+
+#undef SysBase
 #endif
 
 static struct CDVDBase *AllocCDVDBase(struct ExecBase *SysBase)
@@ -221,23 +223,32 @@ static struct CDVDBase *AllocCDVDBase(struct ExecBase *SysBase)
     if (!cdvd)
         return NULL;
 
+    cdvd->g_SysBase = SysBase;
     cdvd->g_iconname = "CD-DA";
 
     return cdvd;
 }
 
-static void FreeCDVDBase(struct CDVDBase *cdvd)
+static void FreeCDVDBase(struct ExecBase *SysBase, struct CDVDBase *cdvd)
 {
+    struct CDVDBase *global = cdvd;
     FreeMem(cdvd, sizeof(*cdvd));
 }
+
+#ifndef __AROS__
+struct CDVDBase *global;
+#endif
 
 LONG handler(struct ExecBase *SysBase)
 {
 register PACKET *packet;
 MSG     *msg;
 ULONG signals;
+#ifdef __AROS__
+struct CDVDBase *global;
+#endif
 
-    struct CDVDBase *global = AllocCDVDBase(SysBase);
+    global = AllocCDVDBase(SysBase);
 
     D(bug("[CDVDFS] In handler, cdvd=%p\n", global));
     global->playing = FALSE;
@@ -317,7 +328,7 @@ ULONG signals;
         D(Alert(0));
         packet->dp_Res1 = DOSFALSE;
         packet->dp_Res2 = 333; /* any error code */
-        global->DosNode->dn_Task = BNULL;
+        global->DosNode->dn_Task = NULL;
         returnpacket(global, packet);
         Forbid ();
         if (DOSBase) {
@@ -409,9 +420,13 @@ ULONG signals;
     CloseLibrary((struct Library *)UtilityBase);
     CloseLibrary((struct Library *)DOSBase);
 
-    FreeCDVDBase(global);
+    FreeCDVDBase(SysBase, global);
     return 0;
 }
+
+#ifndef __AROS__
+#define SysBase (global->g_SysBase)
+#endif
 
 LONG handlemessage(struct CDVDBase *global, ULONG signals) {
 register PACKET *packet;

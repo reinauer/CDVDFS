@@ -85,6 +85,10 @@
 #include "clib_stuff.h"
 #include <exec/interrupts.h>
 
+#ifndef __AROS__
+#undef SysBase
+#endif
+
 AROS_INTH1(CDChangeHandler, struct CDVDBase *, global)
 {
     AROS_INTFUNC_INIT
@@ -94,6 +98,9 @@ AROS_INTH1(CDChangeHandler, struct CDVDBase *, global)
 
     AROS_INTFUNC_EXIT
 }
+#ifndef __AROS__
+#define SysBase (global->g_SysBase)
+#endif
 
 /*
  * i decided to change few things to make this code less insane.

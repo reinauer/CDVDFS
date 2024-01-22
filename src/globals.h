@@ -17,6 +17,9 @@ struct CDVDBase
     struct MinNode MinNode;
 
     /* Library bases */
+#ifndef __AROS__
+    struct ExecBase *g_SysBase;
+#endif
     struct DosLibrary *g_DOSBase;
     struct UtilityBase *g_UtilityBase;/* Utility library for miscellaneous tasks */
     struct IntuitionBase *g_IntuitionBase;
@@ -108,6 +111,10 @@ struct CDVDBase
 
 };
 
+#ifndef __AROS__
+extern struct CDVDBase *global;
+#define SysBase       (global->g_SysBase)
+#endif
 #define DOSBase       (global->g_DOSBase)
 #define UtilityBase   (global->g_UtilityBase)
 #define IntuitionBase (global->g_IntuitionBase)
