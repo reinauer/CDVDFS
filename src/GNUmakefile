@@ -15,7 +15,7 @@ OS=$(shell uname)
 
 # some shortcuts
 
-ifeq "$(OS)" "Linux"
+ifeq (,$(wildcard /c/delete))
 RM		= rm -f
 NOEXEC		= chmod 644
 else
