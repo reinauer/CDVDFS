@@ -367,7 +367,10 @@ struct CDVDBase *global;
 
     if (global->g_cd) {
       /* Mount volume (if any disk is inserted): */
-      Mount_Check (global);
+      int errcode = Mount_Check (global);
+      if(errcode) {
+          BUG(dbprintf(global, "Mount_Check failed: %d\n", errcode);)
+      }
     }
 
     /*
