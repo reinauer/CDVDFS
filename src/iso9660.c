@@ -75,7 +75,7 @@
 
 t_bool Iso_Is_Top_Level_Object (CDROM_OBJ *);
 
-#define VOL(vol,tag) (((t_iso_vol_info *)(vol->vol_info))->tag)
+#define VOL(vol,tag) (((t_iso_vol_info *)(vol->iso_vol_info))->tag)
 #define OBJ(obj,tag) (((t_iso_obj_info *)(obj->obj_info))->tag)
 
 int Get_Volume_Name(VOLUME *p_volume, char *buf, int buflen)
@@ -221,8 +221,8 @@ t_bool Iso_Init_Vol_Info(VOLUME *p_volume, int p_skip, t_ulong p_offset, t_ulong
     D(bug("[CDVDFS]\tIso_Init_Vol_Info()\n"));
 
     p_volume->handler = &g_iso_handler;
-    p_volume->vol_info = AllocMem (sizeof (t_iso_vol_info), MEMF_PUBLIC);
-    if (!p_volume->vol_info)
+    p_volume->iso_vol_info = AllocMem (sizeof (t_iso_vol_info), MEMF_PUBLIC);
+    if (!p_volume->iso_vol_info)
     {
         global->iso_errno = ISOERR_NO_MEMORY;
         return FALSE;
@@ -233,7 +233,7 @@ t_bool Iso_Init_Vol_Info(VOLUME *p_volume, int p_skip, t_ulong p_offset, t_ulong
         if (!Read_Chunk(p_volume->cd, loc))
         {
             global->iso_errno = ISOERR_SCSI_ERROR;
-            FreeMem (p_volume->vol_info, sizeof (t_iso_vol_info));
+            FreeMem (p_volume->iso_vol_info, sizeof (t_iso_vol_info));
             return FALSE;
         }
 
@@ -251,7 +251,7 @@ t_bool Iso_Init_Vol_Info(VOLUME *p_volume, int p_skip, t_ulong p_offset, t_ulong
         if (p_volume->cd->buffer[0] == 255 || loc > 1000)
         {
             global->iso_errno = ISOERR_NO_PVD;
-            FreeMem (p_volume->vol_info, sizeof (t_iso_vol_info));
+            FreeMem (p_volume->iso_vol_info, sizeof (t_iso_vol_info));
             return FALSE;
         }
 
@@ -299,7 +299,7 @@ t_bool Iso_Init_Vol_Info(VOLUME *p_volume, int p_skip, t_ulong p_offset, t_ulong
 void Iso_Close_Vol_Info(VOLUME *p_volume)
 {
     D(bug("[CDVDFS]\tIso_Close_Vol_Info()\n"));
-    FreeMem (p_volume->vol_info, sizeof (t_iso_vol_info));
+    FreeMem (p_volume->iso_vol_info, sizeof (t_iso_vol_info));
 }
 
 CDROM_OBJ *Iso_Alloc_Obj(struct CDVDBase *global, int p_length_of_dir_record)

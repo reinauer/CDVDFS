@@ -41,7 +41,7 @@
 
 #include "clib_stuff.h"
 
-#define VOL(vol,tag) (((t_hfs_vol_info *)(vol->vol_info))->tag)
+#define VOL(vol,tag) (((t_hfs_vol_info *)(vol->hfs_vol_info))->tag)
 #define OBJ(obj,tag) (((t_hfs_obj_info *)(obj->obj_info))->tag)
 
 /* Number of seconds betweem 01-Jan-1904 and 01-Jan-1978: */
@@ -425,8 +425,8 @@ t_hdr_node hdr;
 
 	p_volume->handler = &g_hfs_handler;
 
-	p_volume->vol_info = AllocMem (sizeof (t_hfs_vol_info), MEMF_PUBLIC);
-	if (!p_volume->vol_info)
+	p_volume->hfs_vol_info = AllocMem (sizeof (t_hfs_vol_info), MEMF_PUBLIC);
+	if (!p_volume->hfs_vol_info)
 	{
 		global->iso_errno = ISOERR_NO_MEMORY;
 		return FALSE;
@@ -437,7 +437,7 @@ t_hdr_node hdr;
 	if (!(block = Read_Block(p_volume->cd, p_start_block + 2)))
 	{
 		global->iso_errno = ISOERR_SCSI_ERROR;
-		FreeMem (p_volume->vol_info, sizeof (t_hfs_vol_info));
+		FreeMem (p_volume->hfs_vol_info, sizeof (t_hfs_vol_info));
 		return FALSE;
 	}
 
@@ -449,7 +449,7 @@ t_hdr_node hdr;
 		)
 	{
 		global->iso_errno = ISOERR_SCSI_ERROR;
-		FreeMem (p_volume->vol_info, sizeof (t_hfs_vol_info));
+		FreeMem (p_volume->hfs_vol_info, sizeof (t_hfs_vol_info));
 		return FALSE;
 	}
 
@@ -462,7 +462,7 @@ t_hdr_node hdr;
 
 void HFS_Close_Vol_Info(VOLUME *p_volume)
 {
-	FreeMem (p_volume->vol_info, sizeof (t_hfs_vol_info));
+	FreeMem (p_volume->hfs_vol_info, sizeof (t_hfs_vol_info));
 }
 
 CDROM_OBJ *HFS_Alloc_Obj(struct CDVDBase *global) {

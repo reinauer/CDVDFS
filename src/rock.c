@@ -34,7 +34,7 @@
 #include "aros_stuff.h"
 #include "clib_stuff.h"
 
-#define VOL(vol,tag) (((t_iso_vol_info *)(vol->vol_info))->tag)
+#define VOL(vol,tag) (((t_iso_vol_info *)(vol->iso_vol_info))->tag)
 #define OBJ(obj,tag) (((t_iso_obj_info *)(obj->obj_info))->tag)
 
 /* Check whether the given volume uses the Rock Ridge Interchange Protocol.

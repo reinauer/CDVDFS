@@ -613,7 +613,7 @@ void Show_Subdirectory (CDROM_OBJ *p_home, char *p_name, int p_long_info,
 	  printf ("   is recorded in interleaved mode\n");
 	if (vol->protocol == PRO_ROCK)
 	  Print_System_Use_Fields (vol->cd, dir,
-	  			   ((t_iso_vol_info *) vol->vol_info)->skip,
+				   ((t_iso_vol_info *) vol->iso_vol_info)->skip,
 				   p_long_info == 2);
       }
     }

@@ -21,12 +21,17 @@ typedef enum protocol {
   PRO_JOLIET
 } t_protocol;
 
+struct hfs_vol_info;
+struct iso_vol_info;
 typedef struct VOLUME {
   struct CDVDBase *global;
   CDROM		 *cd;			/* Pointer to CDROM structure	*/
   t_protocol	 protocol;		/* Protocol used		*/
   const struct handler *handler;		/* Pointer to handler struct	*/
-  void		 *vol_info;		/* Depends on protocol		*/
+  union {
+    struct hfs_vol_info *hfs_vol_info;
+    struct iso_vol_info *iso_vol_info;		/* Depends on protocol		*/
+  };
   size_t	 vol_info_size;		/* Size of vol_info structure	*/
   t_bool	 mixed_char_filenames;	/* Filenames may contain upper
   					   and lower case characters    */
