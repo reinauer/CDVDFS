@@ -222,8 +222,10 @@ char name[256];
 		new = HAN(vol, open_obj_in_directory)(obj, name);
 		if (new)
 		{
-			new->pathlist = Append_Path_List(obj->pathlist, name);
-			Close_Object(obj);
+			if (obj) {
+				new->pathlist = Append_Path_List(obj->pathlist, name);
+				Close_Object(obj);
+			}
 			if (*cp && new->symlink_f)
 			{
 				HAN(vol, close_obj)(new);
