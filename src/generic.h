@@ -67,7 +67,10 @@ typedef struct CDROM_INFO {
   uint32_t		protection;	/* Amiga protection bits	     */
   int			comment_length; /* length of file comment	     */
   char			comment[256];	/* file comment			     */
-  void			*suppl_info;	/* supplementary information	     */
+  union {
+    void		*suppl_info;	/* supplementary information	     */
+    struct directory_record *dir;
+  };
 } CDROM_INFO;
 
 /* Codes: M=mandatory,

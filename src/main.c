@@ -588,7 +588,7 @@ void Show_Subdirectory (CDROM_OBJ *p_home, char *p_name, int p_long_info,
     uint32_t offset = 0;
 
     while (Examine_Next (obj, &info, &offset)) {
-     directory_record *dir = info.suppl_info;
+     directory_record *dir = info.dir;
       fwrite (info.name, info.name_length, 1, stdout);
       if (info.symlink_f)
 	printf (" (symbolic link)");
