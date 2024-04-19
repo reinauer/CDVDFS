@@ -127,6 +127,26 @@ char *MKSTR (char *p_in, int p_length, char *p_out)
   return res;
 }
 
+int safe_atoi(const char* str)
+{
+  // Handle empty string or leading whitespace
+  if (!str || *str == '\0' || isspace(*str)) {
+    return 0;
+  }
+
+  char* endptr;
+  long int result = strtol(str, &endptr, 10);
+
+  // Check for errors:
+  // - Conversion stopped due to invalid character before null terminator
+  // - Overflow (result would be outside int range)
+  if (*endptr != '\0' || result > INT_MAX || result < INT_MIN) {
+    return 0;
+  }
+
+  return (int)result;
+}
+
 void Show_Flags (unsigned char p_flags)
 {
   if (p_flags & 1)
@@ -744,7 +764,7 @@ int Get_Device_And_Unit (void)
     exit (1);
   }
   buf[len] = 0;
-  global->g_unit = atoi (buf);
+  global->g_unit = safe_atoi (buf);
 
   if (GetVar ((UBYTE *) "CDROM_FASTMEM", (UBYTE *) buf,
       sizeof (buf), 0) > 0) {
@@ -1023,29 +1043,29 @@ int main (int argc, char *argv[])
   else if (argv[1][0] == 'i')
     Check_Protocol (global->g_cd);
   else if (argv[1][0] == 'j' && argc == 3)
-    Play_Audio (global->g_cd, atoi (argv[2]));
+    Play_Audio (global->g_cd, safe_atoi (argv[2]));
   else if (argv[1][0] == 'l' && argc == 2)
     Find_Offset_Of_Last_Session (global->g_cd);
   else if (argv[1][0] == 'm' && argc == 3)
-    Show_Catalog_Node (global->g_cd, atoi (argv[2]));
+    Show_Catalog_Node (global->g_cd, safe_atoi (argv[2]));
   else if (argv[1][0] == 'o' && argc == 3)
     Try_To_Open (global->g_cd, NULL, argv[2]);
   else if (argv[1][0] == 'r')
     Show_Root_Directory (global->g_cd);
   else if (argv[1][0] == 's' && argc == 3)
-    Show_Sectors (global->g_cd, atoi (argv[2]), 1);
+    Show_Sectors (global->g_cd, safe_atoi (argv[2]), 1);
   else if (argv[1][0] == 's' && argc == 4)
-    Show_Sectors (global->g_cd, atoi (argv[2]), atoi (argv[3]));
+    Show_Sectors (global->g_cd, safe_atoi (argv[2]), safe_atoi (argv[3]));
   else if (argv[1][0] == 't' && argc == 3)
     Try_To_Open (global->g_cd, (char *) -1, argv[2]);
   else if (argv[1][0] == 'v')
     Show_Primary_Volume_Descriptor (global->g_cd);
   else if (argv[1][0] == 'x' && argc == 3)
-    Select_Mode (global->g_cd, atoi (argv[2]), 2048);
+    Select_Mode (global->g_cd, safe_atoi (argv[2]), 2048);
   else if (argv[1][0] == 'x' && argc == 4)
-    Select_Mode (global->g_cd, atoi (argv[2]), atoi (argv[3]));
+    Select_Mode (global->g_cd, safe_atoi (argv[2]), safe_atoi (argv[3]));
   else if (argv[1][0] == 'y' && argc == 3)
-    Find_Block_Starting_With (global->g_cd, atoi (argv[2]));
+    Find_Block_Starting_With (global->g_cd, safe_atoi (argv[2]));
   else if (argv[1][0] == 'z')
     Send_Test_Unit_Ready (global->g_cd);
   else if (argv[1][0] == 'T')
