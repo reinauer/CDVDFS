@@ -142,7 +142,8 @@ int safe_atoi(const char* str)
   // Check for errors:
   // - Conversion stopped due to invalid character before null terminator
   // - Overflow (result would be outside int range)
-  if (*endptr != '\0' || result > INT_MAX || result < INT_MIN) {
+  if ((errno == ERANGE && (result == LONG_MIN || result == LONG_MAX)) ||
+                (*endptr != '\0')) {
     return 0;
   }
 
