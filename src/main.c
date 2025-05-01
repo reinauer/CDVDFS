@@ -26,8 +26,9 @@
  * 09-Oct-93   fmu   Open utility.library.
  */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
@@ -169,6 +170,26 @@ void Show_Flags (unsigned char p_flags)
 void Show_Directory_Record (directory_record *p_dir)
 {
   char buf[256];
+  unsigned char sanitized_file_id_length = p_dir->file_id_length;
+  size_t max_len_in_record = 0;
+
+  if (p_dir->length >= offsetof(struct directory_record, file_id)) {
+    max_len_in_record = p_dir->length - offsetof(struct directory_record, file_id);
+  }
+
+  if (sanitized_file_id_length > max_len_in_record) {
+    fprintf(stderr,
+            "Warning: file_id_length (%u) in directory record exceeds available space (%zu). Clamping.\n",
+            (unsigned int)p_dir->file_id_length, max_len_in_record);
+    sanitized_file_id_length = (unsigned char)max_len_in_record;
+  }
+
+  if (sanitized_file_id_length >= sizeof(buf)) {
+    fprintf(stderr,
+            "Warning: file_id_length (%u) is too large for local display buffer (%zu). Clamping.\n",
+            (unsigned int)sanitized_file_id_length, sizeof(buf) -1 );
+    sanitized_file_id_length = sizeof(buf) - 1;
+  }
 
   printf ("Extended Attr Record Length: %d\n", (int) p_dir->ext_attr_length);
   printf ("Location of Extent:          %lu\n", (unsigned long)p_dir->extent_loc);
@@ -184,12 +205,20 @@ void Show_Directory_Record (directory_record *p_dir)
   printf ("Gap Size:                    %d\n", (int) p_dir->gap_size);
   printf ("Volume Sequence Number:      %hu\n", p_dir->sequence);
   printf ("File Identifier:             ");
-  if (p_dir->file_id[0] == 0)
-    printf ("(00)\n");
-  else if (p_dir->file_id[0] == 1)
-    printf ("(01)\n");
-  else
-    printf ("%s\n", MKSTR (p_dir->file_id, p_dir->file_id_length, buf));
+  if (p_dir->file_id_length == 1) {
+    if (max_len_in_record >=1 && p_dir->file_id[0] == 0x00) {
+      printf ("(00) - Directory Self/Parent Reference\n");
+      return;
+    } else if (max_len_in_record >=1 && p_dir->file_id[0] == 0x01) {
+      printf ("(01) - File Section Identifier\n");
+      return;
+    }
+  }
+  if (sanitized_file_id_length > 0 && max_len_in_record > 0) {
+    printf ("%s\n", MKSTR (p_dir->file_id, sanitized_file_id_length, buf));
+  } else {
+    printf ("(empty or invalid identifier)\n");
+  }
 }
 
 void Find_Block_Starting_With (CDROM *p_cd, int p_val)
@@ -361,15 +390,51 @@ void Show_Directory (CDROM *p_cd, uint32_t p_location, uint32_t p_length)
 void Show_Root_Directory (CDROM *p_cd)
 {
   prim_vol_desc *pvd;
+  uint32_t sanitized_root_data_length;
 
   if (!Read_Chunk (p_cd, 16)) {
     fprintf (stderr, "cannot read sector 16\n");
     exit (1);
   }
 
-  pvd = (prim_vol_desc *) p_cd->buffer;
+  // Initialize with the tainted value
+  sanitized_root_data_length = pvd->root.data_length;
 
-  Show_Directory (p_cd, pvd->root.extent_loc, pvd->root.data_length);
+  // Validate PVD fields used for calculating bounds to ensure they are somewhat reasonable.
+  // A full PVD validation is more extensive, but this covers critical parts.
+  if (pvd->block_size == 0) {
+    fprintf(stderr, "Warning: PVD has invalid block_size (0). Cannot reliably sanitize root.data_length. Defaulting to 0.\n");
+    sanitized_root_data_length = 0;
+  } else if (pvd->space_size == 0) {
+    fprintf(stderr, "Warning: PVD has invalid space_size (0). Cannot reliably sanitize root.data_length. Defaulting to 0.\n");
+    sanitized_root_data_length = 0;
+  } else if (pvd->root.extent_loc >= pvd->space_size) {
+    // Root directory's starting extent is at or beyond the end of the volume space.
+    fprintf(stderr, "Warning: Root directory extent_loc (%lu) is out of volume space_size (%lu). Setting data_length to 0.\n",
+            (unsigned long)pvd->root.extent_loc, (unsigned long)pvd->space_size);
+    sanitized_root_data_length = 0;
+  } else {
+    // Calculate the maximum possible data length for the root directory
+    // based on its starting extent and the total size of the volume.
+    // (pvd->space_size - pvd->root.extent_loc) gives the number of remaining logical blocks.
+    uint64_t remaining_blocks = pvd->space_size - pvd->root.extent_loc;
+    uint64_t max_possible_length_from_bounds = remaining_blocks * pvd->block_size;
+
+    if (sanitized_root_data_length > max_possible_length_from_bounds) {
+      fprintf(stderr,
+              "Warning: Root directory data_length (%lu) from PVD exceeds calculated maximum possible (%llu) based on volume geometry. Clamping.\n",
+              (unsigned long)sanitized_root_data_length, (unsigned long long)max_possible_length_from_bounds);
+
+      // Clamp to the maximum possible length, ensuring it fits in uint32_t
+      if (max_possible_length_from_bounds > UINT32_MAX) {
+          sanitized_root_data_length = UINT32_MAX;
+      } else {
+          sanitized_root_data_length = (uint32_t)max_possible_length_from_bounds;
+      }
+    }
+  }
+
+  Show_Directory (p_cd, pvd->root.extent_loc, sanitized_root_data_length);
 }
 
 void Check_Protocol (CDROM *p_cd)
