@@ -425,7 +425,7 @@ int Get_Device_And_Unit (void)
   		sizeof (global->g_device), 0);
   if (len < 0)
     return 0;
-  if (len >= sizeof (global->g_device)) {
+  if (len >= (int)sizeof (global->g_device)) {
     fprintf (stderr, "CDROM_DEVICE too long\n");
     exit (1);
   }
@@ -435,7 +435,7 @@ int Get_Device_And_Unit (void)
   		sizeof (buf), 0);
   if (len < 0)
     return 0;
-  if (len >= sizeof (buf)) {
+  if (len >= (int)sizeof (buf)) {
     fprintf (stderr, "CDROM_UNIT too long\n");
     exit (1);
   }
@@ -453,8 +453,7 @@ int Get_Device_And_Unit (void)
 
 int main (int argc, char *argv[])
 {
-  struct CDVDBase *global;
-
+  (void)argc; (void)argv;
   global = AllocMem(sizeof(*global), MEMF_CLEAR | MEMF_PUBLIC);
   if (!global)
       return ERROR_NO_FREE_STORE;
