@@ -397,6 +397,8 @@ void Show_Root_Directory (CDROM *p_cd)
     exit (1);
   }
 
+  pvd = (prim_vol_desc *) p_cd->buffer; // Initialize pvd to point to the data read by Read_Chunk
+
   // Initialize with the tainted value
   sanitized_root_data_length = pvd->root.data_length;
 
