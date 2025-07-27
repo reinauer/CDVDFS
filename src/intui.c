@@ -161,20 +161,18 @@ void Close_Intui(struct CDVDBase *global) {
 
 void Display_Error_Tags (struct CDVDBase *global, char *p_message, APTR arg)
 {
-    struct EasyStruct req =
-    {
-        sizeof (struct EasyStruct),
-        0,
-        (UBYTE *) "CDROM Handler Error",
-        NULL,
-        (UBYTE *) "Abort"
-    };
+    struct EasyStruct req; // Declare uninitialized
 
     if (IntuitionBase)
     {
         if (!IntuitionBase->FirstScreen)
             return;
+        // Assign each member separately
+        req.es_StructSize = sizeof (struct EasyStruct);
+        req.es_Flags = 0;
+        req.es_Title = (UBYTE *) "CDROM Handler Error";
         req.es_TextFormat = (UBYTE *) p_message;
+        req.es_GadgetFormat = (UBYTE *) "Abort";
         EasyRequestArgs (NULL, &req, NULL, arg);
     }
 }

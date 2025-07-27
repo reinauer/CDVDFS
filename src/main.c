@@ -130,10 +130,18 @@ char *MKSTR (char *p_in, int p_length, char *p_out)
   return res;
 }
 
+// isspace implementation for safe_atoi to keep
+// gcc from adding bloated builtins.
+
+static int safe_isspace(int c)
+{
+    return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r');
+}
+
 int safe_atoi(const char* str)
 {
   // Handle empty string or leading whitespace
-  if (!str || *str == '\0' || isspace(*str)) {
+  if (!str || *str == '\0' || safe_isspace(*str)) {
     return 0;
   }
 

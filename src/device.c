@@ -483,16 +483,18 @@ UBYTE   notdone = 1;
                 BUG(dbprintf(global, "CDDA icon double-clicked\n");)
                 while ((msg = GetMsg (global->g_app_port)))
                 {
-                        struct TagItem PlayTags[] = {
-                            {SYS_Input , 0   },
-                            {SYS_Output, 0   },
-                            {SYS_Asynch, TRUE},
-                            {TAG_END   , 0   }
-                        };
-
                         ReplyMsg (msg);
                         if (global->g_play_cdda_command[0]) {
+                                struct TagItem PlayTags[4];
+                                PlayTags[0].ti_Tag = SYS_Input;
                                 PlayTags[0].ti_Data = (IPTR)Open ("NIL:", MODE_OLDFILE);
+                                PlayTags[1].ti_Tag = SYS_Output;
+                                PlayTags[1].ti_Data = 0;
+                                PlayTags[2].ti_Tag = SYS_Asynch;
+                                PlayTags[2].ti_Data = TRUE;
+                                PlayTags[3].ti_Tag = TAG_END;
+                                PlayTags[3].ti_Data = 0;
+
                                 System(global->g_play_cdda_command, PlayTags);
                         }
                         else
