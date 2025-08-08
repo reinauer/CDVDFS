@@ -51,5 +51,5 @@ typedef void (*VOID_FUNC)(void);
         ) { AROS_USERFUNC_INIT                             \
             type __unused data = __ufi_data;
 
-#define AROS_INTH1(n, type, data)                  AROS_INTH4(n, type, data, __ufi_intmask, __ufi_custom, __ufi_code)
+#define AROS_INTH1(n, type, data)                  AROS_INTH4(n, type, data, __attribute__((unused)) __ufi_intmask, __attribute__((unused)) __ufi_custom, __attribute__((unused)) __ufi_code)
 

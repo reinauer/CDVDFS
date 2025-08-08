@@ -192,10 +192,10 @@ void Show_Directory_Record (directory_record *p_dir)
     sanitized_file_id_length = (unsigned char)max_len_in_record;
   }
 
-  if (sanitized_file_id_length >= sizeof(buf)) {
+  if ((size_t)sanitized_file_id_length >= sizeof(buf) - 1) {
     fprintf(stderr,
             "Warning: file_id_length (%u) is too large for local display buffer (%zu). Clamping.\n",
-            (unsigned int)sanitized_file_id_length, sizeof(buf) -1 );
+            (unsigned int)sanitized_file_id_length, sizeof(buf) - 1);
     sanitized_file_id_length = sizeof(buf) - 1;
   }
 
@@ -374,7 +374,7 @@ void Show_Directory (CDROM *p_cd, uint32_t p_location, uint32_t p_length)
     exit (1);
   }
 
-  while (cnt < p_length) {
+  while ((uint32_t)cnt < p_length) {
     directory_record *dir = (directory_record *) (p_cd->buffer + pos);
 
     if (dir->length == 0)
@@ -382,7 +382,7 @@ void Show_Directory (CDROM *p_cd, uint32_t p_location, uint32_t p_length)
     Show_Directory_Record (dir);
     cnt += dir->length;
     pos += dir->length;
-    if (cnt < p_length) {
+    if ((uint32_t)cnt < p_length) {
       printf ("------------------------------------------------------------\n");
       if (pos >= 2048) {
 	if (!Read_Chunk (p_cd, ++p_location)) {
@@ -623,7 +623,7 @@ void Print_System_Use_Fields (CDROM *p_cd, directory_record *p_dir,
   system_use_pos += p_skip_size;
 
   /* the system use field must be at least 4 bytes long */
-  while (system_use_pos + 3 < length) {
+  while (system_use_pos + 3 < (int)length) {
     slen = buf[system_use_pos+2];
     /* look for continuation area: */
     if (buf[system_use_pos] == 'C' &&
@@ -827,7 +827,7 @@ int Get_Device_And_Unit (void)
   		sizeof (global->g_device), 0);
   if (len < 0)
     return 0;
-  if (len >= sizeof (global->g_device)) {
+  if ((size_t)len >= sizeof (global->g_device)) {
     fprintf (stderr, "CDROM_DEVICE too long\n");
     exit (1);
   }
@@ -837,7 +837,7 @@ int Get_Device_And_Unit (void)
   		sizeof (buf), 0);
   if (len < 0)
     return 0;
-  if (len >= sizeof (buf)) {
+  if ((size_t)len >= sizeof (buf)) {
     fprintf (stderr, "CDROM_UNIT too long\n");
     exit (1);
   }
@@ -1132,16 +1132,28 @@ int main (int argc, char *argv[])
     Show_Root_Directory (global->g_cd);
   else if (argv[1][0] == 's' && argc == 3)
     Show_Sectors (global->g_cd, safe_atoi (argv[2]), 1);
-  else if (argv[1][0] == 's' && argc == 4)
-    Show_Sectors (global->g_cd, safe_atoi (argv[2]), safe_atoi (argv[3]));
+ else if (argv[1][0] == 's' && argc == 4) {
+    int num_sectors = safe_atoi(argv[3]);
+    if (num_sectors <= 0 || num_sectors > 256) {
+        fprintf(stderr, "Error: Number of sectors to read must be between 1 and 256.\n");
+        exit(1);
+    }
+    Show_Sectors (global->g_cd, safe_atoi (argv[2]), num_sectors);
+  }
   else if (argv[1][0] == 't' && argc == 3)
     Try_To_Open (global->g_cd, (char *) -1, argv[2]);
   else if (argv[1][0] == 'v')
     Show_Primary_Volume_Descriptor (global->g_cd);
   else if (argv[1][0] == 'x' && argc == 3)
     Select_Mode (global->g_cd, safe_atoi (argv[2]), 2048);
-  else if (argv[1][0] == 'x' && argc == 4)
-    Select_Mode (global->g_cd, safe_atoi (argv[2]), safe_atoi (argv[3]));
+  else if (argv[1][0] == 'x' && argc == 4) {
+    int block_length = safe_atoi(argv[3]);
+    if (block_length != 512 && block_length != 1024 && block_length != 2048) {
+        fprintf(stderr, "Error: Invalid block length. Allowed values are 512, 1024, 2048.\n");
+        exit(1);
+    }
+    Select_Mode (global->g_cd, safe_atoi (argv[2]), block_length);
+  }
   else if (argv[1][0] == 'y' && argc == 3)
     Find_Block_Starting_With (global->g_cd, safe_atoi (argv[2]));
   else if (argv[1][0] == 'z')

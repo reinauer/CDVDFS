@@ -162,7 +162,7 @@ int Get_Startup(struct CDVDBase *global,struct FileSysStartupMsg *fssm) {
         if (fssm != (struct FileSysStartupMsg *)-1)
         {
                 len = AROS_BSTR_strlen(fssm->fssm_Device);
-                if (len<sizeof(global->g_device))
+                if ((size_t)len < sizeof(global->g_device))
                 {
                         de = (struct DosEnvec *)BADDR(fssm->fssm_Environ);
                         CopyMem(AROS_BSTR_ADDR(fssm->fssm_Device), global->g_device, len);
@@ -192,7 +192,7 @@ int Get_Startup(struct CDVDBase *global,struct FileSysStartupMsg *fssm) {
                         if (de->de_Control) {
                           /* Get the contents of the control field. */
                           len = AROS_BSTR_strlen(de->de_Control);
-                          if (len > sizeof (LocalBuffer) - 1)
+                          if ((size_t)len > sizeof (LocalBuffer) - 1)
                             len = sizeof (LocalBuffer) - 1;
                           CopyMem (AROS_BSTR_ADDR(de->de_Control), LocalBuffer, len);
 
@@ -286,16 +286,16 @@ int Get_Startup(struct CDVDBase *global,struct FileSysStartupMsg *fssm) {
                                 int len = strlen((char *) Args[ARG_DATAEXT]);
                                 CopyMem((char *)Args[ARG_DATAEXT],
                                   global->g_data_fork_extension,
-                                  len < sizeof(*global->g_data_fork_extension) ?
-                                  len : sizeof(*global->g_data_fork_extension));
+                                  (size_t)len < sizeof(*global->g_data_fork_extension) ?
+                                  (size_t)len : sizeof(*global->g_data_fork_extension));
                               }
 
                               if (Args[ARG_RESOURCEEXT]) {
                                 int len = strlen((char *) Args[ARG_RESOURCEEXT]);
                                 CopyMem((char *)Args[ARG_RESOURCEEXT],
                                   global->g_resource_fork_extension,
-                                  len < sizeof(*global->g_resource_fork_extension) ?
-                                  len : sizeof(*global->g_resource_fork_extension));
+                                  (size_t)len < sizeof(*global->g_resource_fork_extension) ?
+                                  (size_t)len : sizeof(*global->g_resource_fork_extension));
                               }
 
                               global->g_convert_hfs_filenames = (Args[ARG_MACTOISO] != NULL);
@@ -308,7 +308,7 @@ int Get_Startup(struct CDVDBase *global,struct FileSysStartupMsg *fssm) {
                               if (Args[ARG_PLAYCDDA]) {
                                 len = strlen((char *) (Args[ARG_PLAYCDDA]));
 
-                                if (len >= sizeof (global->g_play_cdda_command)) {
+                                if ((size_t)len >= sizeof (global->g_play_cdda_command)) {
                                   Display_Error ("PLAYCDDA command name too long");
                                   result = FALSE;
                                 } else
@@ -346,6 +346,7 @@ int Get_Startup(struct CDVDBase *global,struct FileSysStartupMsg *fssm) {
 
 int Handle_Control_Packet (struct CDVDBase *global, ULONG p_type, IPTR p_par1, IPTR p_par2)
 {
+  (void)p_par2;
   switch (p_type) {
   case CDCMD_LOWERCASE:
     global->g_map_to_lowercase = p_par1;

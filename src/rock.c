@@ -112,7 +112,7 @@ unsigned char *buf = (unsigned char *) p_dir;
 	system_use_pos += VOL(p_volume,skip);
 
 	/* the system use field must be at least 4 bytes long */
-	while (system_use_pos + 3 < length)
+	while (system_use_pos + 3 < (int)length)
 	{
 		slen = buf[system_use_pos+2];
 		if (

@@ -200,7 +200,7 @@ int main (int argc, char *argv[])
     exit(1);
   }
 #endif
-  for (i=0; i < (sizeof (g_par) / sizeof (struct par)); i++) {
+  for (i=0; (size_t)i < (sizeof (g_par) / sizeof (struct par)); i++) {
     if (Stricmp ((UBYTE *) argv[2], (UBYTE *) g_par[i].name) == 0 ||
         Stricmp ((UBYTE *) argv[2], (UBYTE *) g_par[i].abbrev) == 0) {
       void *a = argv[3];

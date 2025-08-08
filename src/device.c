@@ -115,7 +115,7 @@
  *                   - Corrected bug in ACTION_DISK_INFO.
  * 24-Sep-93   fmu   - Added fast memory option 'F'.
  *                   - Added ACTION_IS_FILESYSTEM.
- *                   - Added 'write protected' error for write actions.
+ *                   - Added 'write protected' error for write actions.
  *                   - Added ACTION_CURRENT_VOLUME.
  *                   - Unload handler code after ACTION_DIE.
  *                   - Immediately terminate program if called from CLI.
@@ -209,7 +209,10 @@ char __version__[] = "\0$VER: CDVDFS 1.9 (25.05.2023)";
 
 LONG SAVEDS Main(void)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
     return handler(*(struct ExecBase **)4L);
+#pragma GCC diagnostic pop
 }
 
 #undef SysBase
@@ -231,7 +234,6 @@ static struct CDVDBase *AllocCDVDBase(struct ExecBase *SysBase)
 
 static void FreeCDVDBase(struct ExecBase *SysBase, struct CDVDBase *cdvd)
 {
-    struct CDVDBase *global = cdvd;
     FreeMem(cdvd, sizeof(*cdvd));
 }
 
@@ -1219,6 +1221,7 @@ static void btos(BSTR bstr, char *buf)
 static LOCK *cdlock(CDROM_OBJ *cdfile, int mode)
 {
   struct CDVDBase *global = cdfile->global;
+  (void)mode;
   LOCK *lock = AllocVec(sizeof(LOCK), MEMF_PUBLIC | MEMF_CLEAR);
 
   cdfile->volume->locks++;
@@ -1287,6 +1290,7 @@ CDROM_OBJ *getlockfile (struct CDVDBase *global, IPTR lock)
 
 int Check_For_Volume_Name_Prefix (struct CDVDBase *global, char *p_pathname)
 {
+  (void)global;
   char *pos = strchr (p_pathname, ':');
 
   return pos ? (pos - p_pathname) + 1 : 0;

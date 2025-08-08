@@ -354,14 +354,14 @@ int Seek_Position (CDROM_OBJ *p_object, long p_offset, int p_mode)
 
   switch (p_mode) {
   case SEEK_FROM_START:
-    if (p_offset < 0 || p_offset > max_len) {
+    if (p_offset < 0 || (t_ulong)p_offset > max_len) {
       global->iso_errno = ISOERR_OFF_BOUNDS;
       return 0;
     }
     new_pos = p_offset;
     break;
   case SEEK_FROM_CURRENT_POS:
-    if ((p_offset < 0 && -p_offset > p_object->pos) ||
+    if ((p_offset < 0 && (uint32_t)(-p_offset) > p_object->pos) ||
     	(p_offset > 0 && p_object->pos + p_offset > max_len)) {
       global->iso_errno = ISOERR_OFF_BOUNDS;
       return 0;
@@ -369,7 +369,7 @@ int Seek_Position (CDROM_OBJ *p_object, long p_offset, int p_mode)
     new_pos = p_object->pos + p_offset;
     break;
   case SEEK_FROM_END:
-    if (p_offset > 0 || -p_offset > max_len) {
+    if (p_offset > 0 || (t_ulong)(-p_offset) > max_len) {
       global->iso_errno = ISOERR_OFF_BOUNDS;
       return 0;
     }

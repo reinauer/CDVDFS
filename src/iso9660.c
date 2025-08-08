@@ -80,6 +80,7 @@ t_bool Iso_Is_Top_Level_Object (CDROM_OBJ *);
 
 int Get_Volume_Name(VOLUME *p_volume, char *buf, int buflen)
 {
+    (void)buflen;
     char *iso_name = VOL(p_volume,pvd).volume_id;
 
     D(bug("[CDVDFS]\tGet_Volume_Name()\n"));
@@ -489,7 +490,7 @@ CDROM_OBJ *Iso_Create_Directory_Obj(VOLUME *p_volume, uint32_t p_location)
     len = dir->data_length;
     for (;;)
     {
-        if (offset >= len)
+        if ((uint32_t)offset >= len)
         {
             D(bug("[CDVDFS]\tNo more elements.\n"));
             return NULL;
@@ -566,7 +567,7 @@ CDROM_OBJ *Iso_Open_Obj_In_Directory(CDROM_OBJ *p_dir, char *p_name)
     offset += dir->length;
     for (;;)
     {
-        if (offset >= len)
+        if ((uint32_t)offset >= len)
         {
             D(bug("[CDVDFS]\tNo more directory records\n"));
             global->iso_errno = ISOERR_NOT_FOUND;

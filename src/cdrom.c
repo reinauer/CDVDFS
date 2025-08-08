@@ -89,7 +89,7 @@
 #undef SysBase
 #endif
 
-AROS_INTH1(CDChangeHandler, struct CDVDBase *, global)
+AROS_INTH1(CDChangeHandler, struct CDVDBase *, __attribute__((unused)) global)
 {
     AROS_INTFUNC_INIT
 
@@ -122,6 +122,7 @@ CDROM *Open_CDROM
                 int p_file_buffers
         )
 {
+    (void)p_file_buffers;
     CDROM *cd;
     int i;
     int err = CDROMERR_OK;
@@ -278,6 +279,7 @@ int Read_From_Drive
                 int p_number_of_sectors
         )
 {
+    (void)p_buf_length;
     p_cd->scsireq->io_Length   = 2048 * p_number_of_sectors;
     p_cd->scsireq->io_Data     = (APTR) p_buf;
     p_cd->scsireq->io_Offset   = (ULONG) p_sector << 11;

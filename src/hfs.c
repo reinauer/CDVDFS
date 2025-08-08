@@ -351,7 +351,7 @@ t_ulong next_node;
 			return FALSE;
 		}
 
-		if (next_node == -1)
+		if (next_node == (t_ulong)-1)
 		{
 			global->iso_errno = ISOERR_INTERNAL;
 			return FALSE;
@@ -896,6 +896,7 @@ t_ulong HFS_Volume_Size (VOLUME *p_volume)
 
 t_ulong HFS_Block_Size (VOLUME *p_volume)
 {
+  (void)p_volume;
   return 512;
 }
 
