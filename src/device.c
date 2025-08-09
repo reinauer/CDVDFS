@@ -1328,13 +1328,10 @@ static void Fill_FileInfoBlock (struct CDVDBase *global, FIB *p_fib, CDROM_INFO 
                 /* copy file name: */
                 if (!global->g_show_version_numbers)
                 {
-                        WORD i;
-                        for (i=0; i<len; i++)
+                        char *semi = memchr(src, ';', len);
+                        if (semi)
                         {
-                                if (src[i] == ';') {
-                                        len = i;
-                                        break;
-                                }
+                                len = semi - src;
                         }
                 }
                 *dest++ = len;
