@@ -137,6 +137,7 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/utility.h>
+#include <resources/filesysres.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -189,6 +190,9 @@ static void Send_Event (struct CDVDBase *global, int);
 static void Remove_Volume_Node (struct CDVDBase *global, struct DeviceList *);
 static LONG handlemessage(struct CDVDBase *global, ULONG);
 
+#define MAJOR_VER 1
+#define MINOR_VER 9
+
 #ifdef USE_FAST_BSTR
 #define MAX_NAME_LEN    107
 #define MAX_COMMENT_LEN 79
@@ -214,8 +218,52 @@ LONG SAVEDS Main(void)
     return handler(*(struct ExecBase **)4L);
 #pragma GCC diagnostic pop
 }
-
 #undef SysBase
+
+static struct Library * init();
+
+static const char name[] = "CDVDFS";
+
+static const struct Resident romTag = {
+  .rt_MatchWord = RTC_MATCHWORD,
+  .rt_MatchTag  = (APTR)&romTag,
+  .rt_EndSkip   = 0,
+  .rt_Flags     = RTF_COLDSTART,
+  .rt_Version   = MAJOR_VER,
+  .rt_Type      = NT_UNKNOWN,
+  .rt_Pri       = 0,
+  .rt_Name      = (APTR)&name,
+  .rt_IdString  = (APTR)__version__,
+  .rt_Init      = init
+};
+
+static struct Library * init() {
+    struct ExecBase *SysBase = *(struct ExecBase **)4UL;
+    struct FileSysResource *fsr;
+    APTR segList = Main;
+    segList -= 4;
+
+    if ((fsr = OpenResource(FSRNAME))) {
+        struct FileSysEntry *fse;
+        if ((fse = AllocMem(sizeof(struct FileSysEntry),MEMF_ANY|MEMF_CLEAR))) {
+            fse->fse_Node.ln_Name = (APTR)name;
+            fse->fse_Version      = MAJOR_VER << 16 | MINOR_VER;
+            fse->fse_PatchFlags   = 0x190;
+            fse->fse_Priority     = 10;
+            fse->fse_DosType      = 0x43443031;
+            fse->fse_SegList      = MKBADDR(segList);
+            fse->fse_StackSize    = 10000;
+            fse->fse_GlobalVec    = -1;
+
+            Forbid();
+            AddHead(&fsr->fsr_FileSysEntries,&fse->fse_Node);
+            Permit();
+
+        }
+    }
+    return NULL;
+}
+
 #endif
 
 static struct CDVDBase *AllocCDVDBase(struct ExecBase *SysBase)
