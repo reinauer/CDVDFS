@@ -209,7 +209,7 @@ ULONG __abox__ = 1;
 #endif
 
 #ifndef __AROS__
-char __version__[] = "\0$VER: CDVDFS 1.9 (25.05.2023)";
+const char __version__[] = DEVICE_ID_STRING;
 
 LONG SAVEDS Main(void)
 {

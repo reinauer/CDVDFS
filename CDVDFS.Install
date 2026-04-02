@@ -1,10 +1,10 @@
-;$VER: CDVDFS Install 1.2 (06.05.07)
+;$VER: CDVDFS Install 1.3 (29.12.2024)
 ;(C) 1994 Thomas Kessler
 ;(C) 2005-2007 Pavel Fedin
 
-(set #amicdrom-version "1.4")
-(set #amicdrom-date "(16-Jun-08)")
-(set #install-version "1.2")
+(set #cdvdfs-version "1.10")
+(set #cdvdfs-date "(29.12.2024)")
+(set #install-version "1.3")
 
 (set old-level @user-level)
 (set @default-dest "SYS:")
@@ -69,9 +69,9 @@
 (complete 1)
 
 (user 2)
-(message	"\n\nCDVDFS "#amicdrom-version"\n\n"
-	"a CDROM filesystem for Amiga family of operating systems\n\n"
-	"Version "#amicdrom-version" "#amicdrom-date" © 2007 Pavel Fedin\n"
+(message	"\n\nCDVDFS "#cdvdfs-version"\n\n"
+	"a CDROM filesystem for the Amiga family of operating systems\n\n"
+	"Version "#cdvdfs-version" "#cdvdfs-date" © 2007 Pavel Fedin\n"
 	"Based on AmiCDROM 1.15 © 1993,1994 Frank Munkert\nAll rights reserved.\n"
 	"Install-Script "#install-version" © 1994 Thomas Kessler, 2005-2007 Pavel Fedin\nAll rights reserved.")
 
@@ -593,7 +593,7 @@
 			(help #na)
 			(dest	"DEVS:MountList")
 			(if (exists "DEVS:MountList") (include "DEVS:MountList"))
-			(append "\n/* CDVDFS filesystem V"#amicdrom-version" */\n\n"
+			(append "\n/* CDVDFS filesystem V"#cdvdfs-version" */\n\n"
 				dosdevice"     Handler       = "ldir2"cdrom-handler\n"
 				"        Stacksize      = 10000\n"
 				"        Priority       = 5\n"
@@ -635,7 +635,7 @@
 			(prompt "\nCreating Workbench 2.1+ mount-entry")
 			(help #na)
 			(dest (tackon dev-dir dev-name))
-			(append "/* CDVDFS filesystem V"#amicdrom-version" */\n\n"
+			(append "/* CDVDFS filesystem V"#cdvdfs-version" */\n\n"
 				" Handler        = "ldir2"cdrom-handler\n"
 				" Stacksize      = 10000\n"
 				" Priority       = 5\n"

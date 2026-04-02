@@ -5,7 +5,10 @@
 CDVDFS - a CD/DVD filesystem for Amiga family of operaing systems
 -----------------------------------------------------------------
 
-Version 1.4    16-Jun-08   (C) 2007-2008 Pavel Fedin
+Version 1.10   31-Dec-24   (C) 2023-2024 Stefan Reinauer
+			   (stepan@coreboot.org)
+
+Version 1.9    16-Jun-08   (C) 2007-2008 Pavel Fedin
 			   (sonic_amiga@rambler.ru)
 
 Based on AmiCDROM 1.15     (C) 1993,1994 by Frank Munkert
@@ -862,6 +865,10 @@ Original to-do from Frank Murket:
 @endnode
 
 @node HISTORY "History of CDVDFS"
+
+Changes in V1.10:
+* Backport of AROS CDVDFS code to AmigaOS
+* Fix multiple code issues found by Coverity static code analysis
 
 Changes in V1.4:
 

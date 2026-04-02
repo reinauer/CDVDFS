@@ -16,8 +16,6 @@
 
 #include <inttypes.h>
 
-#define VERSION "CDROM-Handler 1.15 (03.11.94)"
-
 #define SCSI_BUFSIZE 2048
 
 

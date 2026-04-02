@@ -12,6 +12,7 @@ DEBUGLIBS  =
 DEBUGFLAGS = -DNDEBUG
 
 OS=$(shell uname)
+ADATE   := $(shell date '+%-d.%-m.%Y')
 
 # some shortcuts
 
@@ -31,6 +32,7 @@ OPT		=-Os -m68020-60 -mtune=68030
 
 CFLAGS		= $(OPT) -fno-function-cse -Wall -Wextra -Wno-pointer-sign
 CFLAGS         += -I. -include compat.h -I../../libcodesets/developer/include
+CFLAGS         += -DAMIGA_DATE=\"$(ADATE)\"
 
 LDFLAGS1	= -noixemul -nostartfiles
 LDFLAGS2	= -noixemul
