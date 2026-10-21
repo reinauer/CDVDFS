@@ -160,6 +160,10 @@ CDROM *Open_CDROM
         if (NULL == cd->current_sectors)
             break;
 
+        cd->valid_sectors = AllocVec(p_std_buffers, MEMF_PUBLIC | MEMF_CLEAR);
+        if (NULL == cd->valid_sectors)
+            break;
+
         cd->last_used = AllocVec (sizeof (uint32_t) * p_std_buffers, MEMF_PUBLIC | MEMF_CLEAR);
         if (NULL == cd->last_used)
             break;
@@ -302,8 +306,8 @@ int Read_From_Drive
 
 /*
  * USAGE NOTE >> VERY IMPORTANT <<
- * this procedure delivers you buffer that is 'valid' until the next 16-sector-boundary.
- * if you want to read from sec 14 till 34, then you have to do 3 calls (14-16, 16-32, 32-34)
+ * Slots have capacity for 16 sectors. At the volume end, fewer may be
+ * loaded. Callers must use buffer_bytes for the valid length from buffer.
  */
 int Read_Chunk(CDROM *p_cd, long p_sector)
 {
@@ -311,15 +315,31 @@ int Read_Chunk(CDROM *p_cd, long p_sector)
     int status;
     int i;
     int loc;
-    long vol_size;
+    uint64_t read_end = global->g_volume ? global->g_volume->read_end : 0;
     long start;
     int count;
 
     D(bug("[CDVDFS]\tClient requested sector %ld\n", p_sector));
 
+    p_cd->buffer_bytes = 0;
+    if (p_sector < 0)
+        return 0;
+    /* The declared endpoint limits read-ahead, not existing sector access. */
+    if (read_end && (uint64_t)p_sector >= read_end)
+    {
+        status = Read_From_Drive(p_cd, p_cd->buffer_io, SCSI_BUFSIZE, p_sector, 1);
+        if (status)
+        {
+            p_cd->buffer = p_cd->buffer_io;
+            p_cd->buffer_bytes = SCSI_BUFSIZE;
+        }
+        return status;
+    }
+
     for (i=0; i<p_cd->buffers_cnt; i++)
     {
-        if ((p_sector & ~0xf) != p_cd->current_sectors[i])
+        if ((p_sector & ~0xf) != p_cd->current_sectors[i] ||
+            (p_sector & 0xf) >= p_cd->valid_sectors[i])
             continue;
 
         /*
@@ -327,6 +347,10 @@ int Read_Chunk(CDROM *p_cd, long p_sector)
          */
         D(bug("[CDVDFS]\tSector already cached\n"));
         p_cd->buffer = p_cd->buffers[i] + ((p_sector & 0xf) << 11);
+        count = p_cd->valid_sectors[i] - (p_sector & 0xf);
+        if (read_end && read_end - p_sector < (uint64_t)count)
+            count = read_end - p_sector;
+        p_cd->buffer_bytes = count * SCSI_BUFSIZE;
 
         /*
          * try most frequently used
@@ -373,18 +397,18 @@ int Read_Chunk(CDROM *p_cd, long p_sector)
      */
     start = p_sector & ~0xf;
     count = 16;
-    if (global->g_volume != NULL)
-        vol_size = Volume_Size(global->g_volume);
-    else
-        vol_size = 0;
-    if (vol_size != 0 && vol_size - start < count)
-        count = vol_size - start;
+    if (read_end && read_end - start < (uint64_t)count)
+        count = read_end - start;
+    p_cd->current_sectors[loc] = -1;
+    p_cd->valid_sectors[loc] = 0;
     status =
         Read_From_Drive(p_cd, p_cd->buffers[loc], SCSI_BUFSIZE, start, count);
 
     if (status)
     {
-        p_cd->current_sectors[loc] = p_sector & ~0xf;
+        p_cd->current_sectors[loc] = start;
+        p_cd->valid_sectors[loc] = count;
+        p_cd->buffer_bytes = (count - (p_sector - start)) * SCSI_BUFSIZE;
         p_cd->buffer = p_cd->buffers[loc] + ((p_sector & 0xf) << 11);
         p_cd->last_used[loc] = 1000;
     }
@@ -692,6 +716,8 @@ void Cleanup_CDROM (CDROM *p_cd)
         FreeVec (p_cd->last_used);
     if (p_cd->current_sectors)
         FreeVec (p_cd->current_sectors);
+    if (p_cd->valid_sectors)
+        FreeVec(p_cd->valid_sectors);
     if (p_cd->buffers)
         FreeVec (p_cd->buffers);
     if (p_cd->buffer_io)
@@ -705,8 +731,12 @@ void Clear_Sector_Buffers (CDROM *p_cd)
 {
     int i;
 
+    p_cd->buffer_bytes = 0;
     for (i=0; i<p_cd->buffers_cnt; i++)
+    {
         p_cd->current_sectors[i] = -1;
+        p_cd->valid_sectors[i] = 0;
+    }
 }
 
 /* Finds offset of last session. (Not supported by all CDROM drives)

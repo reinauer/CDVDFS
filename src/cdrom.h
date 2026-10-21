@@ -22,6 +22,8 @@
 typedef struct CDROM {
   struct CDVDBase *global;
   unsigned char 	*buffer;
+  uint32_t buffer_bytes; /* Valid bytes starting at buffer */
+  unsigned char *valid_sectors;
   unsigned char		**buffers;
   unsigned char 	*buffer_data;
   unsigned char		*buffer_io;
