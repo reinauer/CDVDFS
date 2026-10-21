@@ -830,6 +830,7 @@ int HFS_Read_From_File(CDROM_OBJ *p_file, char *p_buffer, int p_buffer_length)
 }
 
 t_bool HFS_Cdrom_Info(CDROM_OBJ *p_obj, CDROM_INFO *p_info) {
+    memset(p_info, 0, sizeof(*p_info));
 	p_info->symlink_f = 0;
 	p_info->directory_f = p_obj->directory_f;
 	p_info->name_length = StrLen (OBJ(p_obj,name));
@@ -871,6 +872,8 @@ t_bool HFS_Examine_Next
 struct CDVDBase *global = p_obj->global;
 t_leaf_record_pos leaf;
 short fork = 3;
+
+    memset(p_info, 0, sizeof(*p_info));
 
 	while (fork == 3)
 	{
